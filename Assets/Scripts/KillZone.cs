@@ -6,7 +6,7 @@ namespace DefaultNamespace
     {
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("MainCamera"))
+            if (other.CompareTag("Player"))
             {
                 GameManager.Instance.RestartGame();
             }

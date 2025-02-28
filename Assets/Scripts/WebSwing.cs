@@ -13,7 +13,7 @@ public class WebSwing : MonoBehaviour
    
 
     [Header("Swing Physics")]
-    [SerializeField] private float _maxSwingDistance = 50f;
+    [SerializeField] public static float _maxSwingDistance = 50f;
     [SerializeField] private float _swingPullForce = 80f;
     [SerializeField] private LayerMask _swingLayer;
     [SerializeField] private float timeToAutoRelease = 4f;
