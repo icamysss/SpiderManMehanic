@@ -11,6 +11,7 @@ public class FinishUI : MonoBehaviour
     {
         text.text = $"за {TimerUI.Instance.seconds} сек.";
         Time.timeScale = 0;
+        button.onClick.AddListener(GameManager.Instance.RestartGame);
     }
 
     private void Update()
