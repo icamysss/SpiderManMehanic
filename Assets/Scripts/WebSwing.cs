@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class WebSwing : MonoBehaviour
@@ -5,7 +6,6 @@ public class WebSwing : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform _camera;
     [SerializeField] private LineRenderer _webLine;
-   // [SerializeField] private ParticleSystem _webEffect;
     [SerializeField] private Rigidbody _rb;
 
     [Header("Joint Settings")]
@@ -19,11 +19,18 @@ public class WebSwing : MonoBehaviour
     [SerializeField] private float _swingJumpForce = 120f;
     [SerializeField] private float _swingPullForce = 80f;
     [SerializeField] private LayerMask _swingLayer;
+    [SerializeField] private float timeToAutoRelease = 4f;
+    [SerializeField] private float cooldown = 1.5f;
 
     private Vector3 _swingPoint;
     private SpringJoint _joint;
     private bool _isSwinging;
     private float _originalDrag;
+
+    private float timer;
+    
+    private float cooldownTimer;
+    private bool  isCanSwing;
 
     private void Start()
     {
@@ -35,20 +42,51 @@ public class WebSwing : MonoBehaviour
     {
         HandleInput();
         DrawWeb();
+        ReleaseSwingOnTime();
+        Cooldown();
     }
 
+    private void Cooldown()
+    {
+        if (isCanSwing) return;
+        
+        cooldownTimer += Time.deltaTime;
+        
+        if (!(cooldownTimer >= cooldown)) return;
+        cooldownTimer = 0;
+        isCanSwing = true;
+    }
     private void HandleInput()
     {
         if (Input.GetMouseButtonDown(0)) StartSwing();
         if (Input.GetMouseButtonUp(0)) ReleaseSwing();
     }
 
+    private void ReleaseSwingOnTime()
+    {
+        if (_isSwinging)
+        {
+            timer += Time.deltaTime;
+            if (timer >= timeToAutoRelease)
+            {
+                ReleaseSwing();
+            }
+        }
+        else
+        {
+            timer = 0;
+        }
+    }
     private void StartSwing()
     {
+        if (!isCanSwing) return;
         if (Physics.Raycast(_camera.position, _camera.forward, out RaycastHit hit, _maxSwingDistance, _swingLayer))
         {
             _isSwinging = true;
+            isCanSwing = false; 
             _swingPoint = hit.point;
+            
+          
             
             // Настройка Joint под большой вес
             _joint = gameObject.AddComponent<SpringJoint>();
@@ -68,15 +106,13 @@ public class WebSwing : MonoBehaviour
             // Настройки для тяжёлого тела
             _rb.linearDamping = 1f; // Уменьшаем сопротивление во время качания
             _webLine.enabled = true;
-          //  _webEffect.Play();
         }
     }
 
-    private void ReleaseSwing()
+    public void ReleaseSwing()
     {
         _isSwinging = false;
         _webLine.enabled = false;
-      //  _webEffect.Stop();
         _rb.linearDamping = _originalDrag;
         
         if (_joint != null) Destroy(_joint);
