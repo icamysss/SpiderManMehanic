@@ -57,7 +57,7 @@ public class CombinedCameraController : MonoBehaviour
 
     private void HandleCursorToggle()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             bool isLocked = Cursor.lockState == CursorLockMode.Locked;
             Cursor.lockState = isLocked ? CursorLockMode.None : CursorLockMode.Locked;
