@@ -2,26 +2,27 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class TimerUI : MonoBehaviour
+public class TimerUI : Singleton<TimerUI>
 {
     [Header("Links")]
     [SerializeField] private TMP_Text timerText;   // Ссылка на текст таймера
     [SerializeField] private TMP_Text gameResult;   // Ссылка на текст результата 
-    
-   
-    
-    private int seconds = 0;  // Время таймера
 
+    public bool isActive { get; set; }
+
+    public int seconds = 0;  // Время таймера
     private float timer; // Переменная для отсчета 1 секунды
     
     private void Start()
     {
+        isActive = true;
         seconds = 0 ; 
         timer = 0;
     }
 
     void Update()
     {
+        if (!isActive) return;
         timer += Time.deltaTime;
      
         if (!(timer >= 1)) return;  // если секунда не прошла 

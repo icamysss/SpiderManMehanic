@@ -5,7 +5,6 @@ public class CameraScript : MonoBehaviour
     [SerializeField] Transform player;
     [Range(0.1f, 100f)]
     [SerializeField] float rotationSpeed = 5f;
-    [SerializeField] float minY = -5f, maxY = 5f;
 
     private void Start()
     {

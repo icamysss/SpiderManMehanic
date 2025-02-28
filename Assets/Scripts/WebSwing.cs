@@ -12,11 +12,10 @@ public class WebSwing : MonoBehaviour
     [SerializeField] private float _spring = 45f;
     [SerializeField] private float _damper = 25f;
     [SerializeField] private float _massScale = 8f;
-    [SerializeField] private float _frequency = 2f;
+   
 
     [Header("Swing Physics")]
     [SerializeField] private float _maxSwingDistance = 50f;
-    [SerializeField] private float _swingJumpForce = 120f;
     [SerializeField] private float _swingPullForce = 80f;
     [SerializeField] private LayerMask _swingLayer;
     [SerializeField] private float timeToAutoRelease = 4f;

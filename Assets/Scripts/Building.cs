@@ -1,5 +1,3 @@
-using System;
-using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,7 +17,7 @@ public class Building : MonoBehaviour
 
     private void Start()
     {
-        speed = speed * Random.Range(0.5f, 1.5f);
+        speed *= Random.Range(0.5f, 1.5f);
         transform.localScale = new Vector3(transform.localScale.x, Random.Range(minHeight, maxHeight), transform.localScale.z);
         _renderer = GetComponentInChildren<Renderer>();
         if (_renderer == null)
