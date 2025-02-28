@@ -7,7 +7,7 @@ public class EndPointTrigger : MonoBehaviour
     public UnityEvent OnTrigger;
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("MainCamera"))
         {
             OnTrigger?.Invoke();
         }

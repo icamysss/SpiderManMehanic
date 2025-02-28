@@ -1,49 +1,67 @@
 using UnityEngine;
 
-public class CameraScript : MonoBehaviour
+public class CombinedCameraController : MonoBehaviour
 {
-    [SerializeField] Transform player;
-    [SerializeField] float rotationSpeed = 5f;
+    [SerializeField] private Transform startLookPoint;
+    [SerializeField] float mouseSensitivity = 100f;
     [SerializeField] float verticalAngleLimit = 80f;
 
-    private float _mouseX;
-    private float _mouseY;
-    private float _currentXRotation;
+    private float _xRotation;
+    private float _yRotation;
+    private Quaternion _targetRotation;
 
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        _currentXRotation = transform.localEulerAngles.x;
+        
+        transform.LookAt(startLookPoint.position);
+        // Инициализируем начальные углы
+        Vector3 startEuler = transform.eulerAngles;
+        _xRotation = startEuler.x;
+        _yRotation = startEuler.y;
     }
 
     private void Update()
     {
-        // Получаем ввод мыши
-        _mouseX = Input.GetAxis("Mouse X") * rotationSpeed;
-        _mouseY = Input.GetAxis("Mouse Y") * rotationSpeed;
-
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible =  !Cursor.visible;
-        }
+        HandleMouseInput();
+        HandleCursorToggle();
+        ApplyRotation();
     }
 
-    private void LateUpdate()
+    private void HandleMouseInput()
     {
-        // Горизонтальное вращение игрока
-        player.Rotate(Vector3.up * _mouseX);
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        // Вертикальное вращение камеры с ограничением угла
-        _currentXRotation -= _mouseY;
-        _currentXRotation = Mathf.Clamp(_currentXRotation, -verticalAngleLimit, verticalAngleLimit);
+        // Вертикальное вращение с ограничением
+        _xRotation -= mouseY;
+        _xRotation = Mathf.Clamp(_xRotation, -verticalAngleLimit, verticalAngleLimit);
 
-        // Применяем вращение с интерполяцией
-        transform.localRotation = Quaternion.Lerp(
-            transform.localRotation,
-            Quaternion.Euler(_currentXRotation, 0, 0),
-            Time.deltaTime * rotationSpeed * 10f
+        // Горизонтальное вращение
+        _yRotation += mouseX;
+    }
+
+    private void ApplyRotation()
+    {
+        // Создаем целевой поворот
+        _targetRotation = Quaternion.Euler(_xRotation, _yRotation, 0f);
+        
+        // Плавное вращение
+        transform.rotation = Quaternion.Lerp(
+            transform.rotation,
+            _targetRotation,
+            25f * Time.deltaTime // Коэффициент сглаживания
             );
+    }
+
+    private void HandleCursorToggle()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            bool isLocked = Cursor.lockState == CursorLockMode.Locked;
+            Cursor.lockState = isLocked ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = isLocked;
+        }
     }
 }

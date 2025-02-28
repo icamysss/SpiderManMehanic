@@ -1,12 +1,10 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class WebSwing : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private Transform _camera;
-    [SerializeField] private LineRenderer _webLine;
-    [SerializeField] private Rigidbody _rb;
+     private Transform _camera;
+     private LineRenderer _webLine;
+     private Rigidbody _rb;
 
     [Header("Joint Settings")]
     [SerializeField] private float _spring = 45f;
@@ -29,10 +27,14 @@ public class WebSwing : MonoBehaviour
     private float timer;
     
     private float cooldownTimer;
-    private bool  isCanSwing;
+    private bool  isCanSwing = true;
 
     private void Start()
     {
+        _rb = GetComponent<Rigidbody>();
+        _webLine = GetComponent<LineRenderer>();
+        _camera = Camera.main.transform;
+        
         _originalDrag = _rb.linearDamping;
         _webLine.enabled = false;
     }
